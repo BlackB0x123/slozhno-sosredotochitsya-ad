@@ -1,7 +1,11 @@
 (function initTheme() {
-  const theme = localStorage.getItem('theme');
-  if (theme) {
-    setTheme(theme);
+  try {
+    const theme = localStorage.getItem('theme');
+    if (theme) {
+      setTheme(theme);
+    }
+  } catch {
+    // При запрете хранилища продолжает работать автоматическая тема.
   }
 })();
 
@@ -26,9 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setTheme(theme) {
+  if (!['light', 'dark', 'auto'].includes(theme)) {
+    return;
+  }
   document.documentElement.className = '';
   document.documentElement.classList.add(`theme-${theme}`);
-  localStorage.setItem('theme', theme);
+  try {
+    localStorage.setItem('theme', theme);
+  } catch {
+    // Выбранная тема действует до перезагрузки, даже если запись запрещена.
+  }
 }
 
 function setActiveButton(buttonsArray, theme) {
